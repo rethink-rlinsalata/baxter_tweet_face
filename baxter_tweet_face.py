@@ -31,12 +31,12 @@ oauth = twitter.OAuth(oauth_token, oauth_secret, CONSUMER_KEY, CONSUMER_SECRET)
 
 ts = twitter.TwitterStream(auth=oauth)
 
-it = ts.statuses.filter(track="#OSRFBaxter")
+it = ts.statuses.filter(track="#BaxterDemo")
 
 cv_bridge = CvBridge()
 
 rospy.init_node("baxter_tweet_face", disable_signals=True)
-img_pub = rospy.Publisher('/sdk/xdisplay', sensor_msgs.msg.Image, latch=True)
+img_pub = rospy.Publisher('/robot/xdisplay', sensor_msgs.msg.Image, latch=True)
 i = 0
 for tweet in it:
     print("Received tweet!")
@@ -50,7 +50,7 @@ for tweet in it:
         url = urls[0].get(url_key, None)
         print("There is a url: " + url)
         if url is None:
-            print("Could not get expeanded url...")
+            print("Could not get expanded url...")
             continue
         url_ext = url.split('.')[-1]
         print("Looking at extension: " + url_ext)
@@ -80,7 +80,7 @@ for tweet in it:
         # Convert to cv_image
         cv_image = imread(image_file_name)
         cv_image = cv2.cv.fromarray(cv_image)
-        img_msg = cv_bridge.cv_to_imgmsg(cv_image)
+        img_msg = cv_bridge.cv_to_imgmsg(cv_image, "bgr8")
         print("Publishing the image!")
         img_pub.publish(img_msg)
     else:
